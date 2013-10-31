@@ -73,7 +73,7 @@ module RailsAdmin
               render text: message
             else
               city_id = params[:city_id] || City.default_city(current_user).id
-              @objects = @abstract_model.model.where(city_id: city_id)
+              @objects = list_entries.where(city_id: city_id)
 
               if @nestable_conf.tree?
                 @tree_nodes = @objects.arrange(order: @nestable_conf.options[:position_field])
