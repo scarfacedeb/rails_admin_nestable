@@ -72,12 +72,15 @@ module RailsAdmin
 
               render text: message
             else
+              city_id = params[:city_id] || City.default_city(current_user).id
+              @objects = @abstract_model.model.where(city_id: city_id)
+
               if @nestable_conf.tree?
-                @tree_nodes = @abstract_model.model.arrange(order: @nestable_conf.options[:position_field])
+                @tree_nodes = @objects.arrange(order: @nestable_conf.options[:position_field])
               end
 
               if @nestable_conf.list?
-                @tree_nodes = @abstract_model.model.order(@nestable_conf.options[:position_field])
+                @tree_nodes = @objects.order(@nestable_conf.options[:position_field])
               end
 
               render action: @action.template_name

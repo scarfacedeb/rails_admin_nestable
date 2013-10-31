@@ -1,3 +1,15 @@
+:ruby
+  city_id = params[:city_id]
+  params = request.params.except(:authenticity_token, :action, :controller, :utf8, :bulk_export, :_pjax)
+
+  cities = City.pluck(:title, :id)
+
+= form_tag(nestable_path(params.except(*%w[page f city_id])), :method => :get, :class => "pjax-form form-inline") do
+  .well
+    %span#filters_box
+      = select_tag :city_id, options_for_select(cities, city_id)
+
+
 .row-fluid
   .span12#rails_admin_nestable
     .control-group
@@ -12,3 +24,12 @@
 = stylesheet_link_tag    'rails_admin/rails_admin_nestable'
 = javascript_include_tag 'rails_admin/jquery.nestable'
 = javascript_include_tag 'rails_admin/rails_admin_nestable'
+
+%script
+  :plain
+    (function(){
+      $('#city_id').on( 'change', function(e){
+        // wrap it as jQuery object, because pjax ignores native submit
+        $(e.currentTarget.form).submit();
+      });
+    })();
