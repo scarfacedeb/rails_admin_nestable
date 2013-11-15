@@ -73,6 +73,8 @@ module RailsAdmin
               render text: message
             else
               city_id = params[:city_id] || City.default_city(current_user).id
+              # override default pagination inside list_entries->get_collection
+              params[:all] = true
               @objects = list_entries.where(city_id: city_id)
 
               if @nestable_conf.tree?
