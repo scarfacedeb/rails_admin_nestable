@@ -1,12 +1,13 @@
-- if current_user.group == 'admin'
+- if @show_filters
   :ruby
     params = request.params.except(:authenticity_token, :action, :controller, :utf8, :bulk_export, :_pjax)
 
   = form_tag(nestable_path(params.except(*%w[page f city_id category_id])), :method => :get, :class => "pjax-form form-inline") do
     .well
       %span#filters_box
-        = select_tag :city_id, options_for_select(@cities, @city_id)
-        = select_tag :category_id, options_for_select(@categories, @category_id)
+        - @nestable_conf.options[:filters].each_key do |filter_name|
+          = select_tag "#{filter_name}_id", options_for_select(instance_variable_get("@#{filter_name.to_s.pluralize}"), instance_variable_get("@#{filter_name}_id"))
+
 
 
 .row-fluid
@@ -24,7 +25,7 @@
 = javascript_include_tag 'rails_admin/jquery.nestable'
 = javascript_include_tag 'rails_admin/rails_admin_nestable'
 
-- if current_user.group == 'admin'
+- if @show_filters
   %script
     :plain
       (function(){
