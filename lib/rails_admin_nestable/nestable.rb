@@ -72,10 +72,15 @@ module RailsAdmin
 
               render text: message
             else
-              city_id = params[:city_id] || City.default_city(current_user).id
+              @cities = City.pluck(:title, :id)
+              @city_id = params[:city_id] || City.default_city(current_user).id
+
+              @categories = Category.where(city_id: @city_id).order('title ASC').pluck(:title, :id)
+              @category_id = params[:category_id] || @categories.first[1]
+
               # override default pagination inside list_entries->get_collection
               params[:all] = true
-              @objects = list_entries.where(city_id: city_id)
+              @objects = list_entries.where('city_id = ? AND category_id = ?', @city_id, @category_id)
 
               if @nestable_conf.tree?
                 @tree_nodes = @objects.arrange(order: @nestable_conf.options[:position_field])

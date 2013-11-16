@@ -1,14 +1,12 @@
 - if current_user.group == 'admin'
   :ruby
-    city_id = params[:city_id]
     params = request.params.except(:authenticity_token, :action, :controller, :utf8, :bulk_export, :_pjax)
 
-    cities = City.pluck(:title, :id)
-
-  = form_tag(nestable_path(params.except(*%w[page f city_id])), :method => :get, :class => "pjax-form form-inline") do
+  = form_tag(nestable_path(params.except(*%w[page f city_id category_id])), :method => :get, :class => "pjax-form form-inline") do
     .well
       %span#filters_box
-        = select_tag :city_id, options_for_select(cities, city_id)
+        = select_tag :city_id, options_for_select(@cities, @city_id)
+        = select_tag :category_id, options_for_select(@categories, @category_id)
 
 
 .row-fluid
@@ -30,7 +28,7 @@
   %script
     :plain
       (function(){
-        $('#city_id').on( 'change', function(e){
+        $('#filters_box').on( 'change', 'select', function(e){
           // wrap it as jQuery object, because pjax ignores native submit
           $(e.currentTarget.form).submit();
         });
